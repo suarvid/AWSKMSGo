@@ -15,6 +15,8 @@ var (
 	decryptedPath string = "/home/arvid/go/src/GoKMSClient/files/decrypted.json"
 )
 
+// Encrypt a sample json-file, upload it to S3
+// Then Download and decrypt the uploaded file, writing to decrypted.json
 func main() {
 	keyARN := os.Getenv("GO_AWS_KEY_ARN")
 	bucketname := os.Getenv("GO_AWS_BUCKET_NAME")
