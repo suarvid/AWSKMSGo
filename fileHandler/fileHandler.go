@@ -1,4 +1,4 @@
-package FileHandler
+package filehandler
 
 import (
 	"fmt"
@@ -7,6 +7,10 @@ import (
 	"os"
 )
 
+// FileHandler stores filepaths for files when
+// encrypting/decrypting and uploading/downloading
+// the same files repeatedly.
+// Defines behaviour for reading and writing files.
 type FileHandler struct {
 	plaintextPath string
 	encryptedPath string
@@ -14,6 +18,8 @@ type FileHandler struct {
 	decryptedPath string
 }
 
+// NewHandler returns a new FileHandler with the
+// specified filepaths for ease of use.
 func NewHandler(plaintextPath string, encryptedPath string, downloadPath string, decryptedPath string) FileHandler {
 	handler := new(FileHandler)
 	handler.plaintextPath = plaintextPath
@@ -23,8 +29,10 @@ func NewHandler(plaintextPath string, encryptedPath string, downloadPath string,
 	return *handler
 }
 
-func (self *FileHandler) GetFileHandle(path string) *os.File {
-	if !self.FileExists(path) {
+// GetFileHandle returns a file handle for reading and
+// writing file in a less naive way
+func (f *FileHandler) GetFileHandle(path string) *os.File {
+	if !f.FileExists(path) {
 		os.Create(path)
 	}
 	fileHandle, err := os.OpenFile(path, os.O_RDWR, os.ModeAppend)
@@ -35,46 +43,59 @@ func (self *FileHandler) GetFileHandle(path string) *os.File {
 	return fileHandle
 }
 
-func (self *FileHandler) ReadFile(path string) []byte {
+// ReadFile returns the content of the file with the given
+// path as a byte slice.
+func (f *FileHandler) ReadFile(path string) []byte {
 	data, err := ioutil.ReadFile(path)
-	self.checkError(err)
+	f.checkError(err)
 	return data
 }
 
-func (self *FileHandler) WriteFile(path string, data []byte) {
+// WriteFile writes a byte slice to the given filepath.
+func (f *FileHandler) WriteFile(path string, data []byte) {
 	file, err := os.Create(path)
-	self.checkError(err)
+	f.checkError(err)
 	defer file.Close()
 	file.Write(data)
 }
 
-func (self *FileHandler) FileExists(fileName string) bool {
-	info, err := os.Stat(fileName)
+// FileExists returns a boolean over wheter the file
+// with the given path exists.
+func (f *FileHandler) FileExists(filePath string) bool {
+	info, err := os.Stat(filePath)
 	if os.IsNotExist(err) {
 		return false
 	}
 	return !info.IsDir()
 }
 
-func (self *FileHandler) checkError(err error) {
+func (f *FileHandler) checkError(err error) {
 	if err != nil {
 		fmt.Println("Error in fileHandler.go: ")
 		log.Fatal(err)
 	}
 }
 
-func (self *FileHandler) GetPlaintextPath() string {
-	return self.plaintextPath
+// GetPlaintextPath returns the path to the plaintext file
+// used by the FileHandler
+func (f *FileHandler) GetPlaintextPath() string {
+	return f.plaintextPath
 }
 
-func (self *FileHandler) GetDecryptedPath() string {
-	return self.decryptedPath
+// GetDecryptedPath returns the path to the decrypted file
+// used by the FileHandler
+func (f *FileHandler) GetDecryptedPath() string {
+	return f.decryptedPath
 }
 
-func (self *FileHandler) GetDownloadPath() string {
-	return self.downloadPath
+// GetDownloadPath returns the path to the downloaded file
+// used by the FileHandler
+func (f *FileHandler) GetDownloadPath() string {
+	return f.downloadPath
 }
 
-func (self *FileHandler) GetEncryptedPath() string {
-	return self.encryptedPath
+// GetEncryptedPath returns the path to the encrypted file
+// used by the FileHandler
+func (f *FileHandler) GetEncryptedPath() string {
+	return f.encryptedPath
 }
