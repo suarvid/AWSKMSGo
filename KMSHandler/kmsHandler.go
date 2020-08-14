@@ -55,7 +55,7 @@ func convertKeyTags(tags map[string]string) *[]*kms.Tag {
 // DisableKey disables the key with the ARN specified
 // by the KMSHandler and prevents it from being used for encryption/decryption.
 // Closest thing possible for deleting an individual key without deleting the entire
-// Custom Key Store.
+// Custom Key Store. Disabled keys can be re-enabled.
 func (k *KMSHandler) DisableKey(sess session.Session) {
 	service := kms.New(&sess)
 	_, err := service.DisableKey(&kms.DisableKeyInput{
@@ -89,6 +89,22 @@ func (k *KMSHandler) DecryptData(data []byte, sess session.Session) *kms.Decrypt
 	})
 	k.checkError(err)
 	return result
+}
+
+// ListKeys lists the KeyID and ARN of all keys in the
+// aws region of the KMSHandler
+func (k *KMSHandler) ListKeys(limit int64, sess session.Session) {
+	service := kms.New(&sess)
+
+	result, err := service.ListKeys(&kms.ListKeysInput{
+		Limit: &limit,
+	})
+
+	if err != nil {
+		log.Fatalf("Error listing keys: %v", err)
+	}
+
+	fmt.Print(result.GoString())
 }
 
 func (k *KMSHandler) checkError(err error) {

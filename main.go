@@ -29,5 +29,5 @@ func main() {
 	tags := make(map[string]string)
 	tags["CreatedBy"] = "suarvid"
 	tags["Alias"] = "IsThisTheName"
-	kmsHandler.CreateKey(tags, sess)
+	// kmsHandler.CreateKey(tags, sess)
 }

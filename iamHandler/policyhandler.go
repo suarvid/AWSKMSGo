@@ -42,10 +42,10 @@ type StatementEntry struct {
 // BuildStatementEntry returns a StatementEntry with the specified
 // effect and actions on the given resource.
 // Mainly improves QOL and limits amount of formatting necessary to create a policy.
-func (p *IAMPolicyHandler) BuildStatementEntry(effect string, action []string, resource string) *StatementEntry {
+func (p *IAMPolicyHandler) BuildStatementEntry(effect string, actions []string, resource string) *StatementEntry {
 	entry := StatementEntry{
 		Effect:   effect,
-		Action:   action,
+		Action:   actions,
 		Resource: resource,
 	}
 	return &entry
@@ -63,6 +63,7 @@ func (p *IAMPolicyHandler) CreatePolicy(policyName, version string, statements [
 		Version:   version,
 		Statement: statements,
 	}
+
 	bytes, err := json.Marshal(&policy)
 	if err != nil {
 		log.Fatalf("Error marshalling policy to JSON: %v", err)
